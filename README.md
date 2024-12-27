@@ -1,59 +1,189 @@
-# DirectoryApp
+# Tree View Component
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.0.
+This project demonstrates a Tree View Component implemented in Angular. It allows hierarchical data to be displayed with expandable and collapsible nodes.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Dynamic Tree Rendering:** The component recursively renders nodes based on the folder structure.
+- **Expandable/Collapsible Nodes:** Nodes with children can be expanded or collapsed using a button.
+- **Reusability:** The `TreeNodeComponent` is designed to be reusable for recursive tree rendering.
 
-```bash
-ng serve
+## Project Structure
+
+```plaintext
+src/
+├── app/
+│   ├── tree-container/
+│   │   ├── tree-container.component.ts
+│   │   ├── tree-container.component.html
+│   │   ├── tree-container.component.scss
+│   ├── tree-node/
+│   │   ├── tree-node.component.ts
+│   │   ├── tree-node.component.html
+│   │   ├── tree-node.component.scss
+├── interfaces/
+│   ├── tree-node.interface.ts
+├── mocks/
+│   ├── mocks.ts
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Components
 
-## Code scaffolding
+### `TreeContainerComponent`
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+The main container that holds the root level of the tree.
 
-```bash
-ng generate component component-name
+#### Properties:
+- `folders`: An array of `TreeNode` objects representing the root folders.
+
+#### Template:
+```html
+<div class="tree-container">
+  @for(node of folders; track node.name) {
+  <app-tree-node [node]="node"></app-tree-node>
+  }
+</div>
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### `TreeNodeComponent`
 
-```bash
-ng generate --help
+A recursive component that represents a single tree node.
+
+#### Inputs:
+- `node`: The `TreeNode` object for the current node.
+
+#### Methods:
+- `onExpandCollapseAction()`: Toggles the `isExpanded` property of the node.
+
+#### Template:
+```html
+<div class="tree-node">
+  {{ node.name }}
+  @if (node.children.length) {
+  <button class="expandable-action-btn" (click)="onExpandCollapseAction()">
+    {{ node.isExpanded ? "[-]" : "[+]"}}
+  </button>
+  } @if(node.isExpanded) {
+  <div class="tree-children">
+    @for (child of node.children; track child.name) {
+    <app-tree-node [node]="child"></app-tree-node>
+    }
+  </div>
+  }
+</div>
 ```
 
-## Building
+## Interface
 
-To build the project run:
+### `TreeNode`
 
-```bash
-ng build
+Defines the structure of a node in the tree.
+
+#### Properties:
+- `name: string`: The name of the node.
+- `children: TreeNode[]`: The child nodes.
+- `isExpanded: boolean`: Whether the node is expanded.
+
+```typescript
+export interface TreeNode {
+  name: string;
+  children: TreeNode[];
+  isExpanded: boolean;
+}
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Mock Data
 
-## Running unit tests
+A sample folder structure is provided for demonstration.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+```typescript
+export const MOCK_FOLDER_STRUCTURE = [
+  {
+    name: 'Company Structure',
+    children: [
+      {
+        name: 'Engineering Department',
+        children: [
+          {
+            name: 'Frontend Team',
+            children: [],
+            isExpanded: false,
+          },
+          {
+            name: 'Backend Team',
+            children: [],
+            isExpanded: true,
+          },
+        ],
+        isExpanded: true,
+      },
+      {
+        name: 'Marketing Department',
+        children: [],
+        isExpanded: false,
+      },
+    ],
+    isExpanded: true,
+  },
+  {
+    name: 'Project Management',
+    children: [
+      {
+        name: 'Agile Team',
+        children: [],
+        isExpanded: false,
+      },
+    ],
+    isExpanded: false,
+  },
+];
 ```
 
-## Running end-to-end tests
+## Usage
 
-For end-to-end (e2e) testing, run:
+### Importing Components
 
-```bash
-ng e2e
+Ensure the components are declared in the `AppModule` or any other module.
+
+```typescript
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { TreeContainerComponent } from './tree-container/tree-container.component';
+import { TreeNodeComponent } from './tree-node/tree-node.component';
+
+@NgModule({
+  declarations: [TreeContainerComponent, TreeNodeComponent],
+  imports: [BrowserModule],
+  bootstrap: [TreeContainerComponent],
+})
+export class AppModule {}
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Adding the Component
 
-## Additional Resources
+Use the `app-tree-container` selector in your main template to render the tree.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```html
+<app-tree-container></app-tree-container>
+```
+
+## Styling
+
+The `tree-container` and `tree-node` classes are available for custom styling. Add CSS rules in the corresponding `.scss` files.
+
+## Running the Application
+
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the application:
+   ```bash
+   npm start
+   ```
+4. Open the browser at `http://localhost:4200` to view the tree view.
+
+## License
+
+This project is licensed under the MIT License.
