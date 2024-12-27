@@ -1,5 +1,5 @@
 <div class="tree-container">
-    <div *ngFor="let node of folders">
-        <app-tree-node [node]="node"></app-tree-node>
-    </div>
+  @for(node of folders; track node.name) {
+  <app-tree-node [node]="node"></app-tree-node>
+  }
 </div>
