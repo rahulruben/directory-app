@@ -1,8 +1,13 @@
 <div class="tree-node">
+  @if (node.children.length) {
+  <fa-icon [icon]="node.isExpanded ? faFolderOpen : faFolder"></fa-icon>
+  } @else {
+  <fa-icon [icon]="faFileLines"></fa-icon>
+  }
   {{ node.name }}
   @if (node.children.length) {
   <button class="expandable-action-btn" (click)="onExpandCollapseAction()">
-    {{ node.isExpanded ? "[-]" : "[+]" }}
+    <fa-icon [icon]="node.isExpanded ? faCirclePlus : faCircleMinus"></fa-icon>
   </button>
   } @if(node.isExpanded) {
   <div class="tree-children">
